@@ -8,7 +8,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {useRouter} from "next/navigation";
 import {ChatCompletionRequestMessage} from "openai";
-import ReactMarkdown from "react-markdown";
+import dynamic from 'next/dynamic';
 
 import Heading from "@/components/heading";
 import {
@@ -22,12 +22,13 @@ import {Button} from "@/components/ui/button";
 import { formSchema } from "./constants";
 import Empty from "@/components/empty";
 import Loader from "@/components/loader";
-import {cn} from "@/lib/utils";
-import UserAvatar from "@/components/user-avatar";
-import BotAvatar from "@/components/bot-avatar";
 import {useProModal} from "@/hooks/use-pro-modal";
 import {toast} from "react-hot-toast";
 import OnlyClient from "@/components/only-client";
+
+const DynamicCodeRender = dynamic(() => import('@/components/dynamic/code-render'), {
+    loading: () => <Loader />,
+});
 
 const CodePage = () => {
     const proModal = useProModal();
@@ -133,37 +134,9 @@ const CodePage = () => {
                             <Empty label="No code generated." />
                         )
                     }
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {
-                            messages.map((message) => (
-                                <div
-                                    key={message.content}
-                                    className={cn("p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                        message.role === "user" ? "bg-white border border-black/10" : "bg-muted"
-                                    )}
-                                >
-                                    {
-                                        message.role === "user" ? <UserAvatar /> : <BotAvatar />
-                                    }
-                                    <ReactMarkdown
-                                        components={{
-                                            pre: ({ node, ...props }) => (
-                                                <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                                                   <pre {...props} />
-                                                </div>
-                                            ),
-                                            code: ({ node, ...props }) => (
-                                                <code className="bg-black/10 rounded-lg p-1" {...props} />
-                                            )
-                                        }}
-                                        className="text-sm overflow-hidden leading-7"
-                                    >
-                                        {message.content || ""}
-                                    </ReactMarkdown>
-                                </div>
-                            ))
-                        }
-                    </div>
+
+                    <DynamicCodeRender messages={messages} />
+
                 </div>
             </div>
         </OnlyClient>

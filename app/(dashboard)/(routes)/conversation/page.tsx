@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -21,12 +21,14 @@ import {Button} from "@/components/ui/button";
 import { formSchema } from "./constants";
 import Empty from "@/components/empty";
 import Loader from "@/components/loader";
-import {cn} from "@/lib/utils";
-import UserAvatar from "@/components/user-avatar";
-import BotAvatar from "@/components/bot-avatar";
 import {useProModal} from "@/hooks/use-pro-modal";
 import {BiConversation} from "react-icons/bi";
 import OnlyClient from "@/components/only-client";
+import dynamic from 'next/dynamic';
+
+const DynamicConversationRender = dynamic(() => import('@/components/dynamic/conversation-render'), {
+    loading: () => <Loader />,
+});
 
 const ConversationPage = () => {
     const proModal = useProModal();
@@ -132,25 +134,7 @@ const ConversationPage = () => {
                             <Empty label="No conversation started." />
                         )
                     }
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {
-                            messages.map((message) => (
-                                <div
-                                    key={message.content}
-                                    className={cn("p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                        message.role === "user" ? "bg-white border border-black/10" : "bg-muted"
-                                    )}
-                                >
-                                    {
-                                        message.role === "user" ? <UserAvatar /> : <BotAvatar />
-                                    }
-                                    <p className="text-sm">
-                                        {message.content}
-                                    </p>
-                                </div>
-                            ))
-                        }
-                    </div>
+                    <DynamicConversationRender messages={messages} />
                 </div>
             </div>
         </OnlyClient>
