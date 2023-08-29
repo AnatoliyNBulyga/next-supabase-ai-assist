@@ -2,12 +2,10 @@
 
 import {useState} from "react";
 import * as z from "zod";
-import {Download} from "lucide-react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {useRouter} from "next/navigation";
-import Image from "next/image";
 
 import Heading from "@/components/heading";
 import {
@@ -22,7 +20,6 @@ import {amountOptions, formSchema, resolutionOptions} from "./constants";
 import Empty from "@/components/empty";
 import Loader from "@/components/loader";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Card, CardFooter} from "@/components/ui/card";
 import {useProModal} from "@/hooks/use-pro-modal";
 import {toast} from "react-hot-toast";
 import {BsImage} from "react-icons/bs";
